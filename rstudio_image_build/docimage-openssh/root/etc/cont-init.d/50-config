@@ -1,0 +1,102 @@
+#!/usr/bin/with-contenv bash
+
+USER_NAME=${USER_NAME:-sshuser}
+echo "User name is set to $USER_NAME"
+
+# create folders
+rm -rf /home/$USER_NAME/.ssh
+rm -rf /home/$USER_NAME/ssh_host_keys
+rm -rf /home/$USER_NAME/logs
+mkdir -p \
+    /home/$USER_NAME/{.ssh,ssh_host_keys}
+
+mkdir -p var/run/logs/openssh
+
+# set password for abc to unlock it and set sudo access
+sed -i "/${USER_NAME} ALL.*/d" /etc/sudoers
+if [ "$SUDO_ACCESS" == "true" ]; then
+    if [ -n "$USER_PASSWORD" ] || [ -n "$USER_PASSWORD_FILE" -a -f "$USER_PASSWORD_FILE" ]; then
+        echo "${USER_NAME} ALL=(ALL) ALL" >> /etc/sudoers
+        echo "Sudo is enabled with password."
+    else
+        echo "${USER_NAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+        echo "Sudo is enabled without password."
+    fi
+else
+    echo "Sudo is disabled."
+fi
+[[ -n "$USER_PASSWORD_FILE" ]] && [[ -f "$USER_PASSWORD_FILE" ]] && \
+    USER_PASSWORD=$(cat "$USER_PASSWORD_FILE") && \
+    echo "User password is retrieved from file."
+USER_PASSWORD=${USER_PASSWORD:-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-8};echo;)}
+echo "${USER_NAME}:${USER_PASSWORD}" | chpasswd
+
+# symlink out ssh config directory
+if [ ! -L /etc/ssh ];then
+    if [ ! -f /home/$USER_NAME/ssh_host_keys/sshd_config ]; then
+        sed -i '/#PidFile/c\PidFile \/home/$USER_NAME\/sshd.pid' /etc/ssh/sshd_config
+        cp -a /etc/ssh/sshd_config /home/$USER_NAME/ssh_host_keys/
+    fi
+    rm -Rf /etc/ssh
+    ln -s /home/$USER_NAME/ssh_host_keys /etc/ssh
+    ssh-keygen -A
+    ls -l /home/$USER_NAME/ssh_host_keys/*
+fi
+
+# password access
+if [ "$PASSWORD_ACCESS" == "true" ]; then
+    sed -i '/^#PasswordAuthentication/c\PasswordAuthentication yes' /etc/ssh/sshd_config
+    sed -i '/^PasswordAuthentication/c\PasswordAuthentication yes' /etc/ssh/sshd_config
+    chown root:"${USER_NAME}" \
+        /etc/shadow
+    echo "User/password ssh access is enabled."
+else
+    sed -i '/^PasswordAuthentication/c\PasswordAuthentication no' /etc/ssh/sshd_config
+    chown root:root \
+        /etc/shadow
+    echo "User/password ssh access is disabled."
+fi
+
+# set umask for sftp
+UMASK=${UMASK:-022}
+sed -i "s|/usr/lib/ssh/sftp-server$|/usr/lib/ssh/sftp-server -u ${UMASK}|g" /etc/ssh/sshd_config
+
+# set key auth in file
+if [ ! -f /home/$USER_NAME/.ssh/authorized_keys ];then
+    touch /home/$USER_NAME/.ssh/authorized_keys
+fi
+
+[[ -n "$PUBLIC_KEY" ]] && \
+    [[ ! $(grep "$PUBLIC_KEY" /home/$USER_NAME/.ssh/authorized_keys) ]] && \
+    echo "$PUBLIC_KEY" >> /home/$USER_NAME/.ssh/authorized_keys && \
+    echo "Public key from env variable added"
+
+[[ -n "$PUBLIC_KEY_FILE" ]] && [[ -f "$PUBLIC_KEY_FILE" ]] && \
+    PUBLIC_KEY2=$(cat "$PUBLIC_KEY_FILE") && \
+    [[ ! $(grep "$PUBLIC_KEY2" /home/$USER_NAME/.ssh/authorized_keys) ]] && \
+    echo "$PUBLIC_KEY2" >> /home/$USER_NAME/.ssh/authorized_keys && \
+    echo "Public key from file added"
+
+# back up old log files processed by logrotate
+[[ -f /home/$USER_NAME/logs/openssh/openssh.log ]] && \
+    mv /home/$USER_NAME/logs/openssh /home/$USER_NAME/logs/openssh.old.logs && \
+    mkdir -p /home/$USER_NAME/logs/openssh
+
+# add log file info
+[[ ! -f /home/$USER_NAME/logs/loginfo.txt ]] && \
+    echo "The current log file is named \"current\". The rotated log files are gzipped, named with a TAI64N timestamp and a \".s\" extension" > /var/run/logs/loginfo.txt
+
+# permissions
+chown -R "${USER_NAME}":"${USER_NAME}" \
+    /home/$USER_NAME
+chmod go-w \
+    /home/$USER_NAME
+chmod 700 \
+    /home/$USER_NAME/.ssh
+chmod 600 \
+    /home/$USER_NAME/.ssh/authorized_keys
+
+cd /var/run
+
+chown -R "${USER_NAME}":"${USER_NAME}" \
+    logs/openssh

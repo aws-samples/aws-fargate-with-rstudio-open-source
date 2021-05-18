@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+
+USER_NAME=${USER_NAME:-sshuser}
+
+sudo service ssh start
+
+exec 2>&1 \
+        s6-setuidgid ${USER_NAME} sudo /usr/sbin/sshd -D

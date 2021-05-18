@@ -1,0 +1,56 @@
+######################################################################################
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+# software and associated documentation files (the "Software"), to deal in the Software
+# without restriction, including without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# OFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+######################################################################################
+
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - RSTUDIO_REPOSITORY_URI=${RSTUDIO_REPO_ECR}
+      - OPENSSH_REPOSITORY_URI=${OPENSSH_REPO_ECR}
+      - SHINY_REPOSITORY_URI=${SHINY_REPO_ECR}
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}      
+  build:
+    commands:
+      - echo Rstudio Image Build started on `date`
+      - echo Building the Rstudio Docker image...
+      - docker login -u AWS -p $(aws ecr get-login-password --region $AWS_DEFAULT_REGION) $AWS_DEFAULT_ACCOUNT.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - docker build -f ./docimage-rstudio/Dockerfile_rstudio_base_image -t $RSTUDIO_REPOSITORY_URI:latest .
+      - docker tag $RSTUDIO_REPOSITORY_URI:latest $RSTUDIO_REPOSITORY_URI:$IMAGE_TAG
+      - echo Openssh Image Build started on `date`
+      - echo Building the Openssh Docker image...
+      - docker build -f ./docimage-openssh/Dockerfile_ssh_base_image -t $OPENSSH_REPOSITORY_URI:latest .
+      - docker tag $OPENSSH_REPOSITORY_URI:latest $OPENSSH_REPOSITORY_URI:$IMAGE_TAG
+      - echo Shiny Image Build started on `date`
+      - echo Building the Shiny image...
+      - docker build -f ./docimage-shiny/Dockerfile_shiny_base_image -t $SHINY_REPOSITORY_URI:latest .
+      - docker tag $SHINY_REPOSITORY_URI:latest $SHINY_REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $RSTUDIO_REPOSITORY_URI:latest
+      - docker push $RSTUDIO_REPOSITORY_URI:$IMAGE_TAG
+      - docker push $OPENSSH_REPOSITORY_URI:latest
+      - docker push $OPENSSH_REPOSITORY_URI:$IMAGE_TAG
+      - docker push $SHINY_REPOSITORY_URI:latest
+      - docker push $SHINY_REPOSITORY_URI:$IMAGE_TAG
+      - echo Push completed on `date`

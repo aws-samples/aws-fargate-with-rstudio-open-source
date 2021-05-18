@@ -1,0 +1,24 @@
+#!/usr/bin/with-contenv bash
+
+USER_NAME=${USER_NAME:-sshuser}
+
+PUID=${PUID:-911}
+
+groupadd $USER_NAME
+
+cd /home
+
+rm -rf $USER_NAME
+
+useradd -rm -d /home/$USER_NAME -s /bin/bash -g $USER_NAME -G root -u $PUID $USER_NAME 
+
+usermod -aG sudo $USER_NAME
+
+echo '
+-------------------------------------
+GID/UID
+-------------------------------------'
+echo "
+User uid:    $(id -u "$USER_NAME")
+-------------------------------------
+"
