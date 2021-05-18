@@ -45,7 +45,7 @@ Prerequisites
 
 To deploy the CDK stacks, you should have the following prerequisites: 
 
-1. Access to 4 AWS account (https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Fportal.aws.amazon.com%2Fbilling%2Fsignup%2Fresume&client_id=signup)s (minimum 3) for a basic multi-account deployment 
+1. Access to 4 AWS accounts (https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Fportal.aws.amazon.com%2Fbilling%2Fsignup%2Fresume&client_id=signup) (minimum 3) for a basic multi-account deployment 
 2. Permission to deploy all AWS services mentioned in the solution overview
 3. Review RStudio and Shiny Open Source Licensing: AGPL v3 (https://www.gnu.org/licenses/agpl-3.0-standalone.html)
 4. Basic knowledge of R, RStudio Server, Shiny Server, Linux, AWS Developer Tools (AWS CDK in Python, CodePipeline, CodeCommit), AWS CLI and AWS services mentioned in the solution overview
