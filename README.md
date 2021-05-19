@@ -71,7 +71,7 @@ Figure 2. RStudio/Shiny Open Source Deployment on AWS Serverless Infrastructure
 
 The infrastructure code provided in this repository creates all resources described in the architecture above.
 
-Numbered items refer to Figure 1.
+Numbered items refer to Figure 2.
 
 1. The infrastructure code is developed using AWS CDK for Python and used an AWS CodeCommit repository. 
 2. The CDK stacks are integrated into AWS CodePipeline for automated builds. The stacks are segregated into four different stages and the stack are segregated by AWS services.
@@ -200,15 +200,15 @@ Installation
 
 1. Once you have deployed RStudio and Shiny Server using the automated pipeline following the readme, you will be able to access the installation using a URL like below:
 
-    Shiny server - https://shiny.<instance>.build.<r53_base_domain> -- where instance and r53_base_domain are the values you specified in cdk.json
+        Shiny server - https://shiny.<instance>.build.<r53_base_domain> -- where instance and r53_base_domain are the values you specified in cdk.json
 
   If you mentioned individual_containers as false in cdk.json,
 
-    RStudio Server - https://rstudio.<instance>.build.<r53_base_domain> -- where instance and r53_base_domain are the values you specified in cdk.json
+        RStudio Server - https://rstudio.<instance>.build.<r53_base_domain> -- where instance and r53_base_domain are the values you specified in cdk.json
 
   If you mentioned rstudio_individual_containers as true in cdk.json,
 
-    RStudio Server - https://<user name>.rstudio.<instance>.build.<r53_base_domain> -- where user name, instance and r53_base_domain are the values you specified in cdk.json
+        RStudio Server - https://<user name>.rstudio.<instance>.build.<r53_base_domain> -- where user name, instance and r53_base_domain are the values you specified in cdk.json
 
 2. For RStudio server, the default username is rstudio and the password is randomly generated and stored in AWS Secrets Manager. Individual user passwords are also randomly generated and stored in AWS Secrets Manager. Users will receive their passwords by email against the email ids configured in cdk.json. Only the users named rstudio will have sudo access in the containers.
 
