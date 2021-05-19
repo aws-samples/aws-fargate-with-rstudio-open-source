@@ -64,6 +64,16 @@ class RstudioEC2Stack(cdk.Stack):
 
             if rstudio_pipeline_account_id is None:
                 raise ValueError("Please provide central development account id")
+
+            datalake_account_id = self.node.try_get_context("datalake_account_id")
+
+            if datalake_account_id is None:
+                raise ValueError("Please provide central data account id")
+
+            datalake_aws_region = self.node.try_get_context("datalake_aws_region")
+
+            if datalake_aws_region is None:
+                raise ValueError("Please provide central data account region")
             
             rstudio_athena_bucket_name=self.node.try_get_context("rstudio_athena_bucket_name")
             
@@ -149,8 +159,8 @@ class RstudioEC2Stack(cdk.Stack):
                     break
 
             envvars_cont = {
-                'AWS_ACCOUNT': self.account,
-                'AWS_REGION': self.region,                
+                'AWS_ACCOUNT': datalake_account_id,
+                'AWS_REGION': datalake_aws_region,                
                 'AWS_S3_BUCKET': f's3://{rstudio_athena_bucket_name}/Athena-Query',
                 'AWS_ATHENA_WG': rstudio_athena_wg_name,
                 'RSTUDIO_USERS': rstudio_users,
