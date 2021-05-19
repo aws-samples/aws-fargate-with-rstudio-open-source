@@ -188,6 +188,8 @@ Make sure to provide email ids as usernames in the rstudio_users field. rstudio_
 
     sh ./rstudio_config.sh <profile of the central development account> "arn:aws:kms:<region>:<profile of central development account>:key/<key hash>" <profile of central data account> <comma separated profiles of the rstudio deployment accounts>
 
+Note that by default SES runs in test (sandbox) environment, this requires all the source and target email addresses verified as described above. To get your account out of test environment, you can open a ticket with AWS support from the SES page, for further details, you can refer to: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html
+
 9. Configure cdk.json
 
     Configure the cdk.json to pass parameters for the vuild as per below:

@@ -1,20 +1,26 @@
 ## Open Source RStudio/Shiny on AWS Fargate
 
-This project delivers infrastructure code to run a scalable and highly available RStudio and Shiny Server installation on AWS utilizing various AWS services like Fargate, ECS, EFS, DataSync, S3 etc. The repository contains both the main project and subsets that host certain functionaliities from the main project in case you are only interested in deploying subsets of the entire project. The individual readmes within the folders contain deployment instructions for each project.
+This project delivers infrastructure code to run a scalable and highly available RStudio and Shiny Server installation on AWS utilizing various AWS services like Fargate, ECS, EFS, DataSync, S3 etc. The repository contains both the main project and subsets that host certain functionaliities from the main project in case you are only interested in deploying subsets of the entire project. The individual readmes within the folders contain deployment instructions for each project. The following diagram depicts the overall solution architecture of the project.
 
-The development resources for the RStudio/Shiny deployment (AWS CodeCommit for hosting the AWS CDK in Python code, AWS CodePipeline for deployment of services, Amazon ECR repository for container images) are created in a central AWS account. From this account, AWS Fargate services for RStudio and Shiny along with the integrated services like Amazon ECS, Amazon EFS, AWS DataSync, AWS KMS, AWS WAF, Amazon ALB, and Amazon VPC constructs like Internet Gateway, NAT gateway, Security Groups, Route Tables are deployed into another AWS account. There can be multiple RStudio/Shiny accounts and instances to suit your requirements. You can also host multiple non-production instances of RStudio/Shiny in a single account.
+<img src="/images/Rstudio_architecture.png" alt="Rstudio/Shiney Open Source Architecture on AWS"/>
+
+Figure 1. RStudio/Shiny Open Source Architecture on AWS
+
+The development resources for the RStudio/Shiny deployment (AWS CodeCommit for hosting the AWS CDK in Python code, AWS CodePipeline for deployment of services, Amazon ECR repository for container images) are created in a central AWS account. From this account, AWS Fargate services for RStudio and Shiny along with the integrated services like Amazon ECS, Amazon EFS, AWS DataSync, AWS KMS, AWS WAF, Amazon ALB, and Amazon VPC constructs like Internet Gateway, NAT gateway, Security Groups etc are deployed into another AWS account. There can be multiple RStudio/Shiny accounts and instances to suit your requirements. You can also host multiple non-production instances of RStudio/Shiny in a single account.
 
 The RStudio/Shiny deployment accounts obtain the networking information for the publicly resolvable domain from a central networking account and the data feed for the containers come from a central data repository account. Users upload data to the S3 buckets in the central data account or configure an automated service like AWS Service for SFTP to programmatically upload files. The uploaded files are transferred to the containers using AWS DataSync and Amazon EFS. The RStudio/Shiny containers are integrated with Amazon Athena for directly interacting with tables built on top of S3 data in the central data account.
 
 It is assumed that AWS Shield or AWS Shield Advanced is already configured for the networking account, Amazon GuardDuty is enabled in all accounts along with AWS Config and AWS CloudTrail for monitoring and alerting on security events before deploying the infrastructure code. It is recommended that you use an egress filter for network traffic destined for the internet. The configuration of egress filter is not in scope for this codebase.
 
-All services in this deployment are meant to be in one particular AWS region. The AWS services used in this architecture are managed services and configured for high availability. As soon as a service becomes unavailable, the service will automatically be brought up in the same Availability Zone (AZ) or in a different AZ within the same AWS Region.
+All services in this deployment are meant to be in one particular AWS region. The AWS services used in this architecture are managed services and configured for high availability. As soon as a service becomes unavailable, the service will automatically be brought up in the same Availability Zone (AZ) or in a different AZ within the same AWS Region. The following diagram depicts the deployment architecture of Open SOurce Rstudio/Shiny on AWS.
 
 
+<img src="/images/Rstudio_deployment_image.png" alt="Rstudio/Shiney Open Source Architecture on AWS"/>
 
-Figure 1. RStudio/Shiny Open Source Deployment on AWS Serverless Infrastructure
 
-Deployment
+Figure 2. RStudio/Shiny Open Source Deployment on AWS Serverless Infrastructure
+
+## Deployment
 
 The infrastructure code provided in this repository creates all resources described in the architecture above.
 
@@ -41,7 +47,7 @@ Numbered items refer to Figure 1.
 19. You can create Amazon Athena tables on the central data account S3 buckets for direct interaction using JDBC from RStudio container. Access keys for cross account operation will be configured in the RStudio container R environment. It is recommended that you implement short term credential vending for this operation. 
 
 
-Prerequisites
+## Prerequisites
 
 To deploy the CDK stacks, you should have the following prerequisites: 
 
@@ -54,13 +60,15 @@ To deploy the CDK stacks, you should have the following prerequisites:
 Installation
 
 1. Create the AWS accounts to be used for deployment and ensure you have admin permissions access to each account. Typically, the following accounts are required:
-        1. Central Development account - this is the account where the AWS Secret Manager parameters, CodeCommit repository, ECR repositories, and CodePipeline will be                  created.
+        1. Central Development account - this is the account where the AWS Secret Manager parameters, CodeCommit repository, ECR repositories, and CodePipeline will be created.
         2. Central Network account - the Route53 base public domain will be hosted in this account
-        3. Rstudio instance account - You can use as many of these accounts as required, this account will deploy RStudio and Shiny containers for an instance (dev, test,                uat, prod etc) along with a bastion container and associated services as described in the solution architecture.
+        3. Rstudio instance account - You can use as many of these accounts as required, this account will deploy RStudio and Shiny containers for an instance (dev, test, uat, prod etc) along with a bastion container and associated services as described in the solution architecture.
         4. Central Data account - this is the account to be used for deploying the data lake resources - such as S3 bucket for picking up ingested source files  .
-2. Install (https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) AWS CLI and create (https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-           files.html) AWS CLI profile for each account (pipeline, rstudio, network, datalake ) so that AWS CDK can be used
-    Install (https://docs.aws.amazon.com/cdk/latest/guide/work-with-cdk-python.html) AWS CDK in Python and bootstrap each account and allow the Central Development account to     perform cross-account deployment to all the other accounts.
-3. export CDK_NEW_BOOTSTRAP=1
+2. Install (https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) AWS CLI and create (https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) AWS CLI profile for each account (pipeline, rstudio, network, datalake ) so that AWS CDK can be used.
+
+3. Install (https://docs.aws.amazon.com/cdk/latest/guide/work-with-cdk-python.html) AWS CDK in Python and bootstrap each account and allow the Central Development account to perform cross-account deployment to all the other accounts.
+
+  export CDK_NEW_BOOTSTRAP=1
     npx cdk bootstrap --profile pipeline --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess aws://<Central Development Account>/<Region>
   cdk bootstrap \
     --profile rstudio \
@@ -77,31 +85,34 @@ Installation
     --trust <Central Development Account> \
     --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess \
     aws://<Central Data Account>/<Region>
-4. Ensure you have a docker hub login account, otherwise you might get an error while pulling the container images from Docker Hub with the pipeline - You have reached your      pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits
+
+4. Ensure you have a docker hub login account, otherwise you might get an error while pulling the container images from Docker Hub with the pipeline - You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits
+
 5. Build the docker container images in Amazon ECR in the central development account by running the image build pipeline as instructed in the readme.
         1. Using the AWS console, create a CodeCommit repository to hold the source code for building the images - e.g. rstudio_docker_images
         2. Clone the GitHub repository and move into the rstudio_image_build folder
         3. Using the CLI - Create a secret to store your DockerHub login details as follows:
-        4. aws secretsmanager create-secret --profile <profile of central development account> --name ImportedDockerId --secret-string '{"username":"<dockerhub username>",               "password":"<dockerhub password>"}'
-        5. Create a CodeCommit repository to hold the source code for building the images - e.g. rstudio_docker_images and pass the repository name to the name parameter in              cdk.json for the image build pipeline
-        6. Pass the account numbers (comma separated) where rstudio instances will be deployed in the cdk.json paramter rstudio_account_ids. Refer readme in                              rstudio_image_build folder.
+        4. aws secretsmanager create-secret --profile <profile of central development account> --name ImportedDockerId --secret-string '{"username":"<dockerhub username>","password":"<dockerhub password>"}'
+        5. Create a CodeCommit repository to hold the source code for building the images - e.g. rstudio_docker_images and pass the repository name to the name parameter in cdk.json for the image build pipeline
+        6. Pass the account numbers (comma separated) where rstudio instances will be deployed in the cdk.json paramter rstudio_account_ids. Refer readme in   rstudio_image_build folder.
         7. Synthesize the image build stack 
         8. cdk synth --profile <profile of central development account>
         9. Commit the changes into the CodeCommit repo you created using git
         10. Deploy the pipeline stack for container image build
         11. cdk deploy --profile <profile of central development account>
-        12. Log into AWS console in the central development account and navigate to CodePipeline service. Monitor the pipeline (pipeline name is the name you provided in the             name parameter in cdk.json) and confirm the docker images build successfully.
+        12. Log into AWS console in the central development account and navigate to CodePipeline service. Monitor the pipeline (pipeline name is the name you provided in the name parameter in cdk.json) and confirm the docker images build successfully.
+
 6. Move into the rstudio-fargate folder
 7. Provide the comma separated accounts where rstudio/shiny will be deployed in the cdk.json against the parameter rstudio_account_ids. 
 8. Synthesize the stack Rstudio-Configuration-Stack in the Central Development account
    cdk synth Rstudio-Configuration-Stack --profile <profile of central development account> 
-9. Deploy the Rstudio-Configuration-Stack. This stack should create a new CMK KMS Key to use for creating the secrets with AWS Secrets Maanger. The stack will output the AWS     ARN for the KMS key. Note down the ARN. Set the parameter "encryption_key_arn" inside cdk.json to the above ARN
+9. Deploy the Rstudio-Configuration-Stack. This stack should create a new CMK KMS Key to use for creating the secrets with AWS Secrets Maanger. The stack will output the AWS ARN for the KMS key. Note down the ARN. Set the parameter "encryption_key_arn" inside cdk.json to the above ARN
     cdk deploy Rstudio-Configuration-Stack --profile <profile of rstudio deployment account>
 10. Run the script rstudio_config.sh after setting the required cdk.json parameters. refer readme in rstudio_fargate folder.
-    sh ./rstudio_config.sh <profile of the central development account> "arn:aws:kms:<region>:<profile of central development account>:key/<key hash>" <profile of central         data account> <comma separated profiles of the rstudio deployment accounts>
-11. Run the script check_ses_email.sh with comma separated profiles for rstudio deployment accounts. This will check whether all user emails have been registed with Amazon       SES for all the rstudio deployment accounts in the region before you can deploy rstudio/shiny.
+    sh ./rstudio_config.sh <profile of the central development account> "arn:aws:kms:<region>:<profile of central development account>:key/<key hash>" <profile of central data account> <comma separated profiles of the rstudio deployment accounts>
+11. Run the script check_ses_email.sh with comma separated profiles for rstudio deployment accounts. This will check whether all user emails have been registed with Amazon SES for all the rstudio deployment accounts in the region before you can deploy rstudio/shiny.
     sh ./check_ses_email.sh <comma separated profiles of the rstudio deployment accounts>
-12. Before committing the code into the CodeCommit repository, synthesize the pipeline stack against all the accounts involved in this deployment. The reason behind this is        to ensure all the necessary context values are populated into cdk.context.json file and to avoid the DUMMY values being mapped. 
+12. Before committing the code into the CodeCommit repository, synthesize the pipeline stack against all the accounts involved in this deployment. The reason behind this is to ensure all the necessary context values are populated into cdk.context.json file and to avoid the DUMMY values being mapped. 
     cdk synth --profile <profile of the central development account>
     cdk synth --profile <profile of the central network account>
     cdk synth --profile <profile of the central data account>
@@ -109,13 +120,13 @@ Installation
 
 13. Deploy the Rstudio Fargate pipeline stack
     cdk deploy --profile <profile of the central development account> Rstudio-Piplenine-Stack 
-    Once the stack is deployed, monitor the pipeline by using the AWS CodePipeline service from the central development account. The name of the pipeline is RstudioDev.           Different stacks will be visible in AWS CloudFormation from the relevant accounts.
+    Once the stack is deployed, monitor the pipeline by using the AWS CodePipeline service from the central development account. The name of the pipeline is RstudioDev. Different stacks will be visible in AWS CloudFormation from the relevant accounts.
 
-Notes about the Deployment
+## Notes about the Deployment
 
 1. Once you have deployed RStudio and Shiny Server using the automated pipeline following the readme, you will be able to access the installation using a URL like below:
 
-  Shiny server  -https://shiny.<instance>.build.<r53_base_domain> -- where instance and r53_base_domain are the values you specified in cdk.json
+  Shiny server - https://shiny.<instance>.build.<r53_base_domain> -- where instance and r53_base_domain are the values you specified in cdk.json
 
   If you mentioned individual_containers as false in cdk.json,
   RStudio Server - https://rstudio.<instance>.build.<r53_base_domain> -- where instance and r53_base_domain are the values you specified in cdk.json
