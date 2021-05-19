@@ -69,7 +69,7 @@ cp cdk.json "$cdk_json_backup"
 
 arn_file_backup="rstudio_arn.txt."`date '+%F_%H:%M:%S'`
 
-[[ -f rstudio_arn.txt ]] && mv rstudio_arn.txt "$arn_file_backup"
+[[ -f rstudio_arn.txt ]] && cp rstudio_arn.txt "$arn_file_backup"
 
 read -r -a individual_cont <<< "$rstudio_individual_containers"
 counter=0
