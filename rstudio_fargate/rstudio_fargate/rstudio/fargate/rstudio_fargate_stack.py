@@ -388,7 +388,7 @@ class RstudioFargateStack(cdk.Stack):
                         'AWS_ACCOUNT': datalake_account_id,
                         'AWS_REGION': datalake_aws_region,                
                         'AWS_S3_BUCKET': f's3://{rstudio_athena_bucket_name}/Athena-Query',
-                        'AWS_ATHENA_WG': rstudio_athena_wg_name,
+                        'AWS_ATHENA_WG': f'{rstudio_athena_wg_name}-' + instance,
                         'RSTUDIO_USERS': username,
                         'INSTANCE_NAME': instance,
                         'INDIVIDUAL_CONT': 'YES'
@@ -574,7 +574,7 @@ class RstudioFargateStack(cdk.Stack):
                     'AWS_ACCOUNT': datalake_account_id,
                     'AWS_REGION': datalake_aws_region,                
                     'AWS_S3_BUCKET': f's3://{rstudio_athena_bucket_name}/Athena-Query',
-                    'AWS_ATHENA_WG': rstudio_athena_wg_name,
+                    'AWS_ATHENA_WG': f'{rstudio_athena_wg_name}-' + instance,
                     'RSTUDIO_USERS': rstudio_users,
                     'INSTANCE_NAME': instance,
                     'INDIVIDUAL_CONT': 'NO'
