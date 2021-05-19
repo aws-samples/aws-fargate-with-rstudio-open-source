@@ -27,7 +27,7 @@
     "datalake_aws_region": "<region>",
     "datalake_source_bucket_name": "<globally unique bucket name>",
     "rstudio_athena_bucket_name": "<globally unique bucket name>",
-    "rstudio_athena_wg_name": "rstudio-wg-for-athana",
+    "rstudio_athena_wg_name": "rstudio-wg-for-athena",
     "datalake_source_bucket_key_hourly": "hourly_sync",
     "datalake_source_bucket_key_instant": "instant_sync",
     "@aws-cdk/core:enableStackNameDuplicates": "true",
