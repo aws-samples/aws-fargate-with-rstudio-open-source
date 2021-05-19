@@ -34,20 +34,21 @@ users=`cat cdk.json | jq -r '.context.rstudio_users'`
 IFS=","
 for user in $users
 do
-	for profile in "$rstudio_profiles"
+	for profile in "${rstudio_profiles[@]}"
 	do
+    verif_status=""
 		verif_status=`aws ses --profile "$profile" get-identity-verification-attributes --identities  "$user" |grep -o Success`
 
-
-        if [ "$verif_status" != "Success" ]; then
-            echo "$user" not verified in "$profile"
-            jq 'del(.context.ses_email_verification_check)' cdk.json
-            jq '.context += {"ses_email_verification_check": false}' cdk.json >cdk.json.tmp
-            mv cdk.json.tmp cdk.json
-        elif [ "$verif_status" = "Success" ]; then
-            jq 'del(.context.ses_email_verification_check)' cdk.json
-            jq '.context += {"ses_email_verification_check": true}' cdk.json >cdk.json.tmp
-            mv cdk.json.tmp cdk.json
-        fi
-    done
+	  if [ "$verif_status" != "Success" ]; then
+	      echo "$user" not verified in "$profile"
+        jq 'del(.context.ses_email_verification_check)' cdk.json
+        jq '.context += {"ses_email_verification_check": false}' cdk.json >cdk.json.tmp
+        mv cdk.json.tmp cdk.json
+        exit
+    elif [ "$verif_status" = "Success" ]; then
+        jq 'del(.context.ses_email_verification_check)' cdk.json
+	      jq '.context += {"ses_email_verification_check": true}' cdk.json >cdk.json.tmp
+        mv cdk.json.tmp cdk.json
+	  fi	
+  done
 done
