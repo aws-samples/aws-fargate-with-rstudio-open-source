@@ -17,7 +17,6 @@ All services in this deployment are meant to be in one particular AWS region. Th
 
 <img src="/images/Rstudio_deployment_image.png" alt="Rstudio/Shiney Open Source Architecture on AWS"/>
 
-
 Figure 2. RStudio/Shiny Open Source Deployment on AWS Serverless Infrastructure
 
 ## Deployment
