@@ -129,7 +129,7 @@ Installation
     --trust <Central Development Account> \
     --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess \
     aws://<Central Network Account>/<Region>
-    
+
     cdk bootstrap \
     --profile datalake \
     --trust <Central Development Account> \
@@ -139,50 +139,76 @@ Installation
 4. Ensure you have a docker hub login account, otherwise you might get an error while pulling the container images from Docker Hub with the pipeline - You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits
 
 5. Build the docker container images in Amazon ECR in the central development account by running the image build pipeline as instructed in the readme.
-        1. Using the AWS console, create a CodeCommit repository to hold the source code for building the images - e.g. rstudio_docker_images
-        2. Clone the GitHub repository and move into the rstudio_image_build folder
-        3. Using the CLI - Create a secret to store your DockerHub login details as follows:
-        4. aws secretsmanager create-secret --profile <profile of central development account> --name ImportedDockerId --secret-string '{"username":"<dockerhub username>","password":"<dockerhub password>"}'
-        5. Create a CodeCommit repository to hold the source code for building the images - e.g. rstudio_docker_images and pass the repository name to the name parameter in cdk.json for the image build pipeline
-        6. Pass the account numbers (comma separated) where rstudio instances will be deployed in the cdk.json paramter rstudio_account_ids. Refer readme in   rstudio_image_build folder.
-        7. Synthesize the image build stack 
-        8. cdk synth --profile <profile of central development account>
-        9. Commit the changes into the CodeCommit repo you created using git
-        10. Deploy the pipeline stack for container image build
-        11. cdk deploy --profile <profile of central development account>
-        12. Log into AWS console in the central development account and navigate to CodePipeline service. Monitor the pipeline (pipeline name is the name you provided in the name parameter in cdk.json) and confirm the docker images build successfully.
+
+        a. Using the AWS console, create a CodeCommit repository to hold the source code for building the images - e.g. rstudio_docker_images
+
+        b. Clone the GitHub repository and move into the rstudio_image_build folder
+
+        c. Using the CLI - Create a secret to store your DockerHub login details as follows:
+
+        d. aws secretsmanager create-secret --profile <profile of central development account> --name ImportedDockerId --secret-string '{"username":"<dockerhub username>","password":"<dockerhub password>"}'
+
+        e. Create a CodeCommit repository to hold the source code for building the images - e.g. rstudio_docker_images and pass the repository name to the name parameter in cdk.json for the image build pipeline
+
+        f. Pass the account numbers (comma separated) where rstudio instances will be deployed in the cdk.json paramter rstudio_account_ids. Refer readme in   rstudio_image_build folder.
+
+        g. Synthesize the image build stack 
+
+            cdk synth --profile <profile of central development account>
+
+        i. Commit the changes into the CodeCommit repo you created using git
+
+        j. Deploy the pipeline stack for container image build
+
+            cdk deploy --profile <profile of central development account>
+
+        l. Log into AWS console in the central development account and navigate to CodePipeline service. Monitor the pipeline (pipeline name is the name you provided in the name parameter in cdk.json) and confirm the docker images build successfully.
 
 6. Move into the rstudio-fargate folder
+
 7. Provide the comma separated accounts where rstudio/shiny will be deployed in the cdk.json against the parameter rstudio_account_ids. 
+
 8. Synthesize the stack Rstudio-Configuration-Stack in the Central Development account
-   cdk synth Rstudio-Configuration-Stack --profile <profile of central development account> 
+        cdk synth Rstudio-Configuration-Stack --profile <profile of central development account> 
+
 9. Deploy the Rstudio-Configuration-Stack. This stack should create a new CMK KMS Key to use for creating the secrets with AWS Secrets Maanger. The stack will output the AWS ARN for the KMS key. Note down the ARN. Set the parameter "encryption_key_arn" inside cdk.json to the above ARN
-    cdk deploy Rstudio-Configuration-Stack --profile <profile of rstudio deployment account>
+
+        cdk deploy Rstudio-Configuration-Stack --profile <profile of rstudio deployment account>
+
 10. Run the script rstudio_config.sh after setting the required cdk.json parameters. refer readme in rstudio_fargate folder.
-    sh ./rstudio_config.sh <profile of the central development account> "arn:aws:kms:<region>:<profile of central development account>:key/<key hash>" <profile of central data account> <comma separated profiles of the rstudio deployment accounts>
+
+        sh ./rstudio_config.sh <profile of the central development account> "arn:aws:kms:<region>:<profile of central development account>:key/<key hash>" <profile of central data account> <comma separated profiles of the rstudio deployment accounts>
+
 11. Run the script check_ses_email.sh with comma separated profiles for rstudio deployment accounts. This will check whether all user emails have been registed with Amazon SES for all the rstudio deployment accounts in the region before you can deploy rstudio/shiny.
-    sh ./check_ses_email.sh <comma separated profiles of the rstudio deployment accounts>
-12. Before committing the code into the CodeCommit repository, synthesize the pipeline stack against all the accounts involved in this deployment. The reason behind this is to ensure all the necessary context values are populated into cdk.context.json file and to avoid the DUMMY values being mapped. 
-    cdk synth --profile <profile of the central development account>
-    cdk synth --profile <profile of the central network account>
-    cdk synth --profile <profile of the central data account>
-    cdk synth --profile <repeat for each profile of the RStudio deplyment account>
+
+        sh ./check_ses_email.sh <comma separated profiles of the rstudio deployment accounts>
+
+12. Before committing the code into the CodeCommit repository, synthesize the pipeline stack against all the accounts involved in this deployment. The reason behind this is to ensure all the necessary context values are populated into cdk.context.json file and to avoid the DUMMY values being mapped.
+
+        cdk synth --profile <profile of the central development account>
+        cdk synth --profile <profile of the central network account>
+        cdk synth --profile <profile of the central data account>
+        cdk synth --profile <repeat for each profile of the RStudio deplyment account>
 
 13. Deploy the Rstudio Fargate pipeline stack
-    cdk deploy --profile <profile of the central development account> Rstudio-Piplenine-Stack 
+
+        cdk deploy --profile <profile of the central development account> Rstudio-Piplenine-Stack 
+
     Once the stack is deployed, monitor the pipeline by using the AWS CodePipeline service from the central development account. The name of the pipeline is RstudioDev. Different stacks will be visible in AWS CloudFormation from the relevant accounts.
 
 ## Notes about the Deployment
 
 1. Once you have deployed RStudio and Shiny Server using the automated pipeline following the readme, you will be able to access the installation using a URL like below:
 
-  Shiny server - https://shiny.<instance>.build.<r53_base_domain> -- where instance and r53_base_domain are the values you specified in cdk.json
+    Shiny server - https://shiny.<instance>.build.<r53_base_domain> -- where instance and r53_base_domain are the values you specified in cdk.json
 
   If you mentioned individual_containers as false in cdk.json,
-  RStudio Server - https://rstudio.<instance>.build.<r53_base_domain> -- where instance and r53_base_domain are the values you specified in cdk.json
+
+    RStudio Server - https://rstudio.<instance>.build.<r53_base_domain> -- where instance and r53_base_domain are the values you specified in cdk.json
 
   If you mentioned rstudio_individual_containers as true in cdk.json,
-  RStudio Server - https://<user name>.rstudio.<instance>.build.<r53_base_domain> -- where user name, instance and r53_base_domain are the values you specified in cdk.json
+
+    RStudio Server - https://<user name>.rstudio.<instance>.build.<r53_base_domain> -- where user name, instance and r53_base_domain are the values you specified in cdk.json
 
 2. For RStudio server, the default username is rstudio and the password is randomly generated and stored in AWS Secrets Manager. Individual user passwords are also randomly generated and stored in AWS Secrets Manager. Users will receive their passwords by email against the email ids configured in cdk.json. Only the users named rstudio will have sudo access in the containers.
 
