@@ -34,7 +34,7 @@ fitControl <- trainControl(## 10-fold CV
                           summaryFunction = twoClassSummary)
 
 set.seed(825)
-gbmFit1 <- train(Class ~ ., data = df_train_transformed[,2:11], 
+gbmFit1 <- train(Class ~ ., data = df_train_transformed[,2:10], 
                  method = "gbm", 
                  trControl = fitControl,
                  ## This last option is actually one
@@ -43,10 +43,10 @@ gbmFit1 <- train(Class ~ ., data = df_train_transformed[,2:11],
                  metric = "ROC")
 gbmFit1
 
-predict(gbmFit1, newdata = df_test_transformed[,2:11], type = "prob")
+predict(gbmFit1, newdata = df_test_transformed[,2:10], type = "prob")
 
 saveRDS(preProcValues, file = './breast-cancer-prediction/preProcessor.rds')
 saveRDS(gbmFit1, file = './breast-cancer-prediction/gbm_model.rds')
-saveRDS(df_test, file = './breast-cancer-prediction/breast_cancer_test_data.rds')
+saveRDS(df_test[,1:10], file = './breast-cancer-prediction/breast_cancer_test_data.rds')
 
 
