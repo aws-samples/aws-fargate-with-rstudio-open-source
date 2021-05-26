@@ -1,4 +1,5 @@
 install.packages(c('caret', 'mlbench', 'gbm', 'e1071', 'tidyverse'))
+setwd("~/aws-fargate-with-rstudio-open-source/ml_example")
 library(caret)
 library(mlbench)
 
@@ -34,7 +35,7 @@ fitControl <- trainControl(## 10-fold CV
                           summaryFunction = twoClassSummary)
 
 set.seed(825)
-gbmFit1 <- train(Class ~ ., data = df_train_transformed[,2:10], 
+gbmFit1 <- train(Class ~ ., data = df_train_transformed[,2:11], 
                  method = "gbm", 
                  trControl = fitControl,
                  ## This last option is actually one
