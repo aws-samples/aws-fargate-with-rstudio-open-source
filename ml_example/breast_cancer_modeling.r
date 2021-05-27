@@ -20,7 +20,6 @@ df_train <- df[ trainIndex,]
 df_test  <- df[-trainIndex,]
 preProcValues <- preProcess(df_train, method = c("center", "scale", "medianImpute"))
 df_train_transformed <- predict(preProcValues, df_train)
-df_test_transformed <- predict(preProcValues, df_test)
 
 # train a model on df_train
 fitControl <- trainControl(## 10-fold CV
@@ -35,19 +34,17 @@ fitControl <- trainControl(## 10-fold CV
                           summaryFunction = twoClassSummary)
 
 set.seed(825)
-gbmFit1 <- train(Class ~ ., data = df_train_transformed[,2:11], 
+gbmFit <- train(Class ~ ., data = df_train_transformed[,2:11], 
                  method = "gbm", 
                  trControl = fitControl,
                  ## This last option is actually one
                  ## for gbm() that passes through
                  verbose = FALSE,
                  metric = "ROC")
-gbmFit1
-
-predict(gbmFit1, newdata = df_test_transformed[,2:10], type = "prob")
+gbmFit
 
 saveRDS(preProcValues, file = './breast-cancer-prediction/preProcessor.rds')
-saveRDS(gbmFit1, file = './breast-cancer-prediction/gbm_model.rds')
+saveRDS(gbmFit, file = './breast-cancer-prediction/gbm_model.rds')
 saveRDS(df_test[,1:10], file = './breast-cancer-prediction/breast_cancer_test_data.rds')
 
 

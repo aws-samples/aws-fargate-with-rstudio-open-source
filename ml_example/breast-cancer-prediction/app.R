@@ -42,7 +42,7 @@ ui <- fluidPage(
             # Input: Decimal interval with step value ----
             sliderInput("threshold", "Probability Threshold:",
                         min = 0, max = 1,
-                        value = 0.5, step = 0.1),
+                        value = 0.5, step = 0.01),
             
             # Input: Selector for variable to plot on x axis ----
             selectInput("variable_x", "Variable on X:",
@@ -94,14 +94,15 @@ server <- function(input, output) {
     # output$caption and output$mpgPlot functions
     total_count <- reactive({
         data.frame(Class = colnames(prediction),
-                   Count = colSums(prediction>=input$threshold))
+                   Count = c(sum(prediction$malignant<input$threshold),
+                             sum(prediction$malignant>=input$threshold)))
     })
     
     # Compute the formula text ----
     # This is in a reactive expression since it is shared by the
     # output$caption and output$mpgPlot functions
     threshold_proba <- reactive({
-        cbind(Prediction = ifelse(prediction$malignant>=0.7, 
+        cbind(Prediction = ifelse(prediction$malignant>=input$threshold, 
                                   "malignant", "benign"),
               test_data)
     })
