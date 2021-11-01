@@ -201,8 +201,8 @@ class PipelineStack(Stack):
                     "ecr:BatchGetImage",
                 ],
                 resources=[
-                    f"arn:{cdk.Stack.of(self).partition}:ecr:{cdk.Stack.of(self).region}:{cdk.Stack.of(self).account}:repository/{code_repo_name}_connect_image_{instance}",
-                    f"arn:{cdk.Stack.of(self).partition}:ecr:{cdk.Stack.of(self).region}:{cdk.Stack.of(self).account}:repository/{code_repo_name}_package_image_{instance}",
+                    f"arn:{cdk.Stack.of(self).partition}:ecr:{cdk.Stack.of(self).region}:{cdk.Stack.of(self).account}:repository/{connect_repository_name}",
+                    f"arn:{cdk.Stack.of(self).partition}:ecr:{cdk.Stack.of(self).region}:{cdk.Stack.of(self).account}:repository/{package_repository_name}",
                 ],
             )
         )
