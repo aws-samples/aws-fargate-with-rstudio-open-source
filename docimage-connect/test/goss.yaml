@@ -1,0 +1,83 @@
+user:
+  rstudio-connect:
+    exists: true
+    uid: 999
+    gid: 999
+
+group:
+  rstudio-connect:
+    exists: true
+    gid: 999
+
+package:
+  rstudio-connect:
+    installed: true
+
+file:
+  /etc/rstudio-connect/license.lic:
+    # Currently does not exist
+    # Be sure it is NOT a directory
+    exists: false
+  /opt/rstudio-connect/:
+    exists: true
+  /opt/rstudio-connect/bin/connect:
+    exists: true
+  /usr/local/bin/tini:
+    exists: true
+# Ensure startup file exists
+  /usr/local/bin/startup.sh:
+    exists: true
+    owner: root
+    group: root
+    filetype: file
+# Ensure log files exist
+  /var/log/rstudio-connect.log:
+    exists: true
+  /opt/python/{{.Env.PYTHON_VERSION}}/bin/python:
+    exists: true
+  /opt/python/{{.Env.PYTHON_VERSION_ALT}}/bin/python:
+    exists: true
+  /tmp/startup.log:
+    exists: true
+    contains:
+    - "!Error: Couldn't read configuration file "
+
+# Check product version
+command:
+  "/opt/rstudio-connect/bin/connect --version":
+    title: connect_version_matches
+    exit-status: 0
+    stdout: [
+       "{{ .Env.RSC_VERSION }}"
+    ]
+# Checks if connect is running
+  "pgrep connect":
+    title: connect_running
+    exit-status: 0
+# Ensure correct R version
+  "/opt/R/{{ .Env.R_VERSION }}/bin/R --version":
+    title: r_version_match
+    exit-status: 0
+    stdout: [
+      "{{ .Env.R_VERSION }}"
+    ]
+  "/opt/R/{{ .Env.R_VERSION_ALT }}/bin/R --version":
+    title: r_version_match
+    exit-status: 0
+    stdout: [
+      "{{ .Env.R_VERSION_ALT }}"
+    ]
+
+# Ensure correct python version
+  "/opt/python/{{ .Env.PYTHON_VERSION }}/bin/python --version":
+    title: python_version_matches
+    exit-status: 0
+    stdout: [
+      "{{ .Env.PYTHON_VERSION }}"
+    ]
+  "/opt/python/{{ .Env.PYTHON_VERSION_ALT }}/bin/python --version":
+    title: python_version_matches
+    exit-status: 0
+    stdout: [
+      "{{ .Env.PYTHON_VERSION_ALT }}"
+    ]

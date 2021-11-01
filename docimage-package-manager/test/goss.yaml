@@ -1,0 +1,59 @@
+user:
+  rstudio-pm:
+    exists: true
+    uid: 999
+    gid: 999
+
+group:
+  rstudio-pm:
+    exists: true
+    gid: 999
+
+package:
+  rstudio-pm:
+    installed: true
+
+file:
+  /etc/rstudio-pm/license.lic:
+# Currently does not exist
+# Be sure it is NOT a directory
+    exists: false
+  /opt/rstudio-pm/:
+    exists: true
+  /opt/rstudio-pm/bin/rstudio-pm:
+    exists: true
+  /opt/rstudio-pm/bin/rspm:
+    exists: true
+  /usr/local/bin/rspm:
+    exists: true
+  /usr/local/bin/tini:
+    exists: true
+  /tmp/startup.log:
+    exists: true
+    contains:
+    - "!Unable to initialize the configuration"
+# TODO: Ensure that this does _not_ exist in the future
+#  /var/log/rstudio-pm.log:
+#    exists: true
+#    filetype: file
+
+# Check product version
+command:
+  "/opt/rstudio-pm/bin/rstudio-pm --version":
+    title: package-manager_version_matches
+    exit-status: 0
+    stdout: [
+      "/{{ .Env.RSPM_VERSION }}/"
+    ]
+# Ensure package manager is running
+  "pgrep rstudio-pm":
+    title: rspm_running
+    exit-status: 0
+
+# Ensure correct R version
+  "/opt/R/{{ .Env.R_VERSION }}/bin/R --version":
+    title: r_version_match
+    exit-status: 0
+    stdout: [
+      "/{{ .Env.R_VERSION }}/"
+    ]

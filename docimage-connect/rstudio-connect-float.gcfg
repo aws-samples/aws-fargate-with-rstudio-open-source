@@ -1,0 +1,43 @@
+; RStudio Connect configuration file
+
+[Licensing]
+LicenseType = remote
+
+[Server]
+; SenderEmail is an email address used by RStudio Connect to send outbound
+; email. The system will not be able to send administrative email until this
+; setting is configured.
+;
+; SenderEmail = account@company.com
+; The public URL to this RStudio Connect container. This might the address for
+; a proxy or the host running the Docker container.
+; Address = https://rstudio-connect.company.com
+
+; The persistent data directory mounted into our container.
+DataDir = /data
+
+; Address is a public URL for this RStudio Connect server. Must be configured
+; to enable features like including links to your content in emails. If
+; Connect is deployed behind an HTTP proxy, this should be the URL for Connect
+; in terms of that proxy.
+;
+; Address = https://rstudio-connect.company.com
+Address =
+
+[HTTP]
+; RStudio Connect will listen on this network address for HTTP connections.
+Listen = :3939
+
+[Authentication]
+; Specifies the type of user authentication.
+Provider = password
+
+[Python]
+Enabled = true
+Executable = /opt/python/3.6.5/bin/python
+
+;[RPackageRepository "CRAN"]
+;URL = https://demo.rstudiopm.com/all/__linux__/bionic/latest
+;
+;[RPackageRepository "RSPM"]
+;URL = https://demo.rstudiopm.com/all/__linux__/bionic/latest

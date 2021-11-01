@@ -1,0 +1,33 @@
+{
+  "Parameters": {
+    "db_domain_suffix": "sage.com",
+    "docker_secret_name": "ImportedDockerId",
+    "rsc_license_key_secret_name": "RSCLicenseKey",
+    "rspm_license_key_secret_name": "RSPMLicenseKey",
+    "asg_min_capacity": "1",
+    "asg_desired_capacity": "2",
+    "asg_max_capacity": "10",
+    "rsc_min_capacity": "2",
+    "rsc_desired_capacity": "4",
+    "rsc_max_capacity": "40",
+    "rsc_cont_mem_reserved": "2048",
+    "rspm_min_capacity": "2",
+    "rspm_desired_capacity": "2",
+    "rspm_max_capacity": "4",
+    "rspm_cont_mem_reserved": "2048",
+    "rsc_cookie_stickiness_duration": "24",
+    "rsc_health_check_grace_period": "900",
+    "rspm_cookie_stickiness_duration": "24",
+    "rspm_health_check_grace_period": "900",
+    "rsc_scale_in_cooldown": "60",
+    "rsc_scale_out_cooldown": "30",
+    "rsc_cpu_target_utilization_percent": "70",
+    "rsc_memory_target_utilization_percent": "70",
+    "rsc_requests_per_target": "50",
+    "rspm_scale_in_cooldown": "60",
+    "rspm_scale_out_cooldown": "30",
+    "rspm_cpu_target_utilization_percent": "70",
+    "rspm_memory_target_utilization_percent": "70",
+    "rspm_requests_per_target": "50"
+  }
+}

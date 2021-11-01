@@ -1,0 +1,16 @@
+version: '2.3'
+services:
+
+  sut:
+    image: $IMAGE_NAME
+    command: /run_tests.sh
+    privileged: true
+    entrypoint: []
+    environment:
+      # uses .env by default
+      - RSPM_VERSION
+      - R_VERSION
+      - RSPM_LICENSE
+    volumes:
+      - "./test/run_tests.sh:/run_tests.sh"
+      - "./test/goss.yaml:/tmp/goss.yaml"

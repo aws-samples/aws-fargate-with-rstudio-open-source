@@ -1,0 +1,75 @@
+"""
+Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+SPDX-License-Identifier: MIT-0
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this
+software and associated documentation files (the "Software"), to deal in the Software
+without restriction, including without limitation the rights to use, copy, modify,
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+OFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+"""
+
+import setuptools
+
+
+with open("README.md") as fp:
+    long_description = fp.read()
+
+
+setuptools.setup(
+    name="rstudio_connect_deploy",
+    version="0.0.1",
+    description="RStudio Connect & RStudio Package Manager Deployment on AWS",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="pchayan@amazon.com",
+    package_dir={"": "rstudio_connect_deploy"},
+    packages=setuptools.find_packages(where="rstudio_connect_deploy"),
+    install_requires=[
+        "aws_cdk.aws_ec2",
+        "aws_cdk.aws_ecs",
+        "aws_cdk.aws_ecs-patterns",
+        "aws_cdk.aws_certificatemanager",
+        "aws_cdk.aws_route53",
+        "aws_cdk.aws_route53_targets",
+        "aws_cdk.aws_efs",
+        "aws_cdk.aws_logs",
+        "aws_cdk.aws_kms",
+        "aws_cdk.aws_sns",
+        "aws_cdk.aws_sns_subscriptions",
+        "aws_cdk.aws_events",
+        "aws_cdk.aws_events_targets",
+        "aws_cdk.aws_elasticloadbalancingv2",
+        "aws_cdk.aws_secretsmanager",
+        "aws_cdk.aws_ecr_assets",
+        "aws_cdk.pipelines",
+        "aws_cdk.aws_codepipeline",
+        "aws_cdk.aws_codepipeline_actions",
+        "aws_cdk.aws_codecommit",
+        "aws_cdk.aws_codebuild",
+        "aws_cdk.aws_rds",
+        "aws_cdk.aws_wafv2",
+    ],
+    python_requires=">=3.6",
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: Apache Software License",
+        "Programming Language :: JavaScript",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Topic :: Software Development :: Code Generators",
+        "Topic :: Utilities",
+        "Typing :: Typed",
+    ],
+)

@@ -1,0 +1,25 @@
+[HTTP]
+Listen = :4242
+
+[Server]
+DataDir = /efs
+RVersion = /opt/R/3.6.2/
+
+[Launcher]
+ServerUser = root
+AdminGroup = root
+
+[Git]
+BuilderDir = "/tmp/git"
+
+[Metrics]
+Enabled = true
+
+[Database]
+Provider = postgres
+
+[Postgres]
+URL = "postgres://PM_DB_USER@PM_DB_HOST.DB_DOMAIN_SUFFIX/PM_DB_NAME"
+Password = "PM_DB_PWD"
+UsageDataURL = "postgres://PM_USAGE_DB_USER@PM_USAGE_DB_HOST.DB_DOMAIN_SUFFIX/PM_USAGE_DB_NAME"
+UsageDataPassword = "USAGE_DB_PWD"
