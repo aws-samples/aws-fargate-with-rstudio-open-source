@@ -1,0 +1,33 @@
+{
+    "Parameters": {
+      "docker_secret_name": "dockerid",
+      "asg_min_capacity": "1",
+      "asg_desired_capacity": "2",
+      "asg_max_capacity": "10",
+      "shiny_min_capacity": "2",
+      "shiny_desired_capacity": "2",
+      "shiny_max_capacity": "4",
+      "shiny_container_memory_in_gb": "4",
+      "rstudio_container_memory_reserved": "2048",
+      "rstudio_health_check_grace_period": "900",
+      "shiny_health_check_grace_period": "900",
+      "shiny_cookie_stickiness_duration": "24",
+      "shiny_scale_in_cooldown": "60",
+      "shiny_scale_out_cooldown": "30",
+      "shiny_cpu_target_utilization_percent": "70",
+      "shiny_memory_target_utilization_percent": "70",
+      "shiny_requests_per_target": "50",
+      "datalake_source_bucket_key_hourly": "hourly_sync",
+      "access_point_path_hourly": "/rstudio-path-hourly",
+      "datalake_source_bucket_key_instant": "instant_sync",
+      "access_point_path_instant": "/rstudio-path-instant",
+      "athena_output_bucket_key": "Athena-Query",
+      "s3_lifecycle_expiration_duration": "365",
+      "s3_trasnition_duration_infrequent_access": "30",
+      "s3_trasnition_duration_glacier": "90",
+      "home_container_path": "/home",
+      "shiny_share_container_path": "/srv/shiny-server",
+      "hourly_sync_container_path": "/s3_data_sync/hourly_sync",
+      "instant_sync_container_path": "/s3_data_sync/instant_upload"      
+    }
+  }

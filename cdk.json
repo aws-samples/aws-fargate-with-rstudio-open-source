@@ -1,0 +1,28 @@
+{
+  "app": "python3 app.py",
+  "context": {
+    "instance": "dev",
+    "rstudio_account_id": "xxxxxxxxxxxx",
+    "rstudio_pipeline_account_id": "qqqqqqqqqqqqq",
+    "network_account_id": "nnnnnnnnnnnn",
+    "datalake_account_id": "ttttttttttt",
+    "datalake_aws_region": "eu-west-1",
+    "code_repo_name": "codecommit_repository_name",
+    "r53_base_domain": "example.com",
+    "rstudio_install_type": "ec2",
+    "rstudio_ec2_instance_type": "t3.xlarge",
+    "rstudio_container_memory_in_gb": "4",
+    "number_of_rstudio_containers": "4", 
+    "vpc_cidr_range": "10.5.0.0/16",
+    "allowed_ips": "",
+    "sns_email_id": "abc@example.com",
+    "datalake_source_bucket_name": "S3 bucket name",
+    "@aws-cdk/core:enableStackNameDuplicates": "true",
+    "aws-cdk:enableDiffNoFail": "true",
+    "@aws-cdk/core:stackRelativeExports": "true",
+    "@aws-cdk/aws-ecr-assets:dockerIgnoreSupport": true,
+    "@aws-cdk/aws-secretsmanager:parseOwnedSecretName": true,
+    "@aws-cdk/aws-kms:defaultKeyPolicies": true,
+    "@aws-cdk/core:newStyleStackSynthesis": "true"
+  }
+}
