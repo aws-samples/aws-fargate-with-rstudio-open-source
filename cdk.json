@@ -1,0 +1,19 @@
+{
+  "app": "python3 -B app.py",
+  "context": {
+    "instance": "dev",
+    "vpc_cidr_range": "172.23.10.0/24",
+    "source_account_id": "xxxxxxxxxxx",
+    "destination_account_id": "yyyyyyyyyy",
+    "datasync_task_arn_ssm_param_name": "/datasync/datasync_task_arn",
+    "source_bucket_name": "upload-source-bucket",
+    "lambda_trigger_function_name": "trigger_datasync_task",
+    "@aws-cdk/core:enableStackNameDuplicates": "true",
+    "aws-cdk:enableDiffNoFail": "true",
+    "@aws-cdk/core:stackRelativeExports": "true",
+    "@aws-cdk/aws-ecr-assets:dockerIgnoreSupport": true,
+    "@aws-cdk/aws-secretsmanager:parseOwnedSecretName": true,
+    "@aws-cdk/aws-kms:defaultKeyPolicies": true,
+    "@aws-cdk/core:newStyleStackSynthesis": "true"
+  }
+}
