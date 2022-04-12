@@ -1,0 +1,19 @@
+{
+  "app": "python3 app.py",
+  "context": {
+    "instance": "dev",
+    "app_account_id": "xxxxxxxxxxxx",
+    "network_account_id": "yyyyyyyyyyyy",
+    "code_repo_name": "zone_delegation",
+    "r53_base_domain": "example.com",
+    "r53_sub_domain": "build",
+    "sns_email_id": "abcd@example.com",
+    "@aws-cdk/core:enableStackNameDuplicates": "true",
+    "aws-cdk:enableDiffNoFail": "true",
+    "@aws-cdk/core:stackRelativeExports": "true",
+    "@aws-cdk/aws-ecr-assets:dockerIgnoreSupport": true,
+    "@aws-cdk/aws-secretsmanager:parseOwnedSecretName": true,
+    "@aws-cdk/aws-kms:defaultKeyPolicies": true,
+    "@aws-cdk/core:newStyleStackSynthesis": "true"
+  }
+}
