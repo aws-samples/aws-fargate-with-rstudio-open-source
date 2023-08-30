@@ -1,0 +1,49 @@
+{
+    "instance": "DEV",
+    "resource_name": "ASG-METRIC",
+    "efs": {
+        "uid": "1001",
+        "gid": "1001",
+        "permission": "0775",
+        "mount_path": "/share"
+    },
+    "code_repo_name": "",
+    "ami_name": "",
+    "vpc_cidr_range": "",
+    "nlb_subnet_type": "PRIVATE_WITH_EGRESS",
+    "asg_subnet_type": "PRIVATE_WITH_EGRESS",
+    "ec2_type": "",
+    "ec2_size": "",
+    "asg-scale-up": {
+        "min_capacity": "1",
+        "desired_capacity": "2",
+        "max_capacity": "5",
+        "cooldown_duration": "3",
+        "timeout_duration": "10",
+        "day_of_week": "MON",
+        "hour_of_day": "4",
+        "minute_of_day": "0"
+    },
+    "asg-scale-down": {
+        "min_capacity": "1",
+        "desired_capacity": "1",
+        "max_capacity": "1",
+        "day_of_week": "SAT",
+        "hour_of_day": "0",
+        "minute_of_day": "0"
+    },
+    "metric": {
+        "metric_granularity_min": "1",
+        "name_space": "EC2TCPConnection",
+        "metric_name": "TcpConnectionNumberOnPort",
+        "dimension_name": "AutoScalingGroupApp",
+        "dimension_value": "ASG-BLOG-DEV",
+        "threshold_value": ""
+    },
+    "listen_port": "",
+    "healthcheck_port": "",
+    "cert_arn": "",
+    "log_file_path": "",
+    "tag_name": "ASG-BLOG", 
+    "tag_value": "DEV" 
+}
