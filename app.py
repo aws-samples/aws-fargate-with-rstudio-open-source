@@ -28,7 +28,7 @@ from asg_custom_metric.pipeline_stack import PipelineStack
 
 app = cdk.App()
 
-with open("parameters.json", "r") as param_file:
+with open("parameters.json", "r", encoding="utf-8") as param_file:
     param_data = param_file.read()
 CONFIG = json.loads(param_data)
 

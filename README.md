@@ -171,19 +171,20 @@ To deploy the CDK stacks, you should have the following prerequisites:
     aws codecommit --profile <profile of AWS account> create-repository --repository-name <name of repository>
     ```
 4.  Configure the `parameters.json` file to pass parameters for the build as per below:
-- "code_repo_name": "" -- enter the CodeCommit repository that you created in step 3 above.
-- "ami_name": "" -- enter the AWS AMI name that you created in step 9 above.
-- "vpc_cidr_range": "" -- enter the VPC CIDR range e.g. 10.0.0.0/16.
-- "ec2_type": "" -- enter EC2 type e.g. MEMORY5.
-- "ec2_size": "" -- enter EC2 size e.g. LARGE.
-- "asg-scale-up": "" -- this section has the parameters for scaling up the ASG, modify as necessary.
-- "asg-scale-down": "" -- this section has the parameters for the scaling down the ASG, modify as necessary.
-- "metric": "" -- this section has the parameters to define the custom applicaiton metric, modify as necessary.
-- "threshold_value": "" -- enter a threshold value for the application metric to trigger ASG activities e.g. 100.
-- "listen_port": "" -- enter a port number for NLB listener.
-- "healthcheck_port": "" -- enter a port number of NLB health check.
-- "cert_arn": "" -- enter the certificate ARN that you created in step 8 above.
-- "log_file_path": "" -- enter the path on EC2 from which log file will be uploaded to CloudWatch.</br>
+
+     <br>"code_repo_name": "" -- enter the CodeCommit repository that you created in step 3 above.</br>
+     "ami_name": "" -- enter the AWS AMI name that you created in step 9 above.</br>
+     "vpc_cidr_range": "" -- enter the VPC CIDR range e.g. 10.0.0.0/16.</br>
+     "ec2_type": "" -- enter EC2 type e.g. MEMORY5.</br> 
+     "ec2_size": "" -- enter EC2 size e.g. LARGE.</br>
+     "asg-scale-up": "" -- this section has the parameters for scaling up the ASG, modify as necessary.</br>
+     "asg-scale-down": "" -- this section has the parameters for the scaling down the ASG, modify as necessary.</br>
+     "metric": "" -- this section has the parameters to define the custom applicaiton metric, modify as necessary.</br>
+     "threshold_value": "" -- enter a threshold value for the application metric to trigger ASG activities e.g. 100.</br>
+     "listen_port": "" -- enter a port number for NLB listener.</br>
+     "healthcheck_port": "" -- enter a port number of NLB health check.</br>
+     "cert_arn": "" -- enter the certificate ARN that you created in step 8 above.</br>
+     "log_file_path": "" -- enter the path on EC2 from which log file will be uploaded to CloudWatch.</br>
 
 
      Apart from the parameters mentioned above, there are a few other parameters in cdk.json that are configured by default. Do not modify values of these parameters:
@@ -281,7 +282,6 @@ cdk destroy --profile <AWS CLI profile of central development account>
 or delete the "PipelineStack" stack from AWS CloudFormation console.
 
         
-
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
